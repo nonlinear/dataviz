@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>metis</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<style type="text/css">
+svg {
+  outline: solid 1px #eee;
+}
+</style>
+<body>
+ <div class="container">
+  <h1>Anscombe's Quartet II</h1>
+
+</div>
+</body>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+var anscomeData = [
+  {"x": 14, "y": 8.1},
+  {"x": 13, "y": 8.74},
+  {"x": 12, "y": 9.13},
+  {"x": 11, "y": 9.26},
+  {"x": 10, "y": 9.14},
+  {"x": 9, "y": 8.77},
+  {"x": 8, "y": 8.14},
+  {"x": 7, "y": 7.26},
+  {"x": 6, "y": 6.13},
+  {"x": 5, "y": 4.74},
+  {"x": 4, "y": 3.1}
+];
+
+var w = d3.select(".container").node().clientWidth,
+  h = 400;
+
+var xscale = d3.scaleLinear()
+  .domain ([0,20])
+  .range ([0,w]);
+
+var yscale = d3.scaleLinear()
+  .domain ([0,10])
+  .range ([h,0]);
+
+
+
+var svg = d3.select(".container")
+  .append("svg")
+  .attr("width", w)
+  .attr("height", h);
+
+svg.selectAll("circle")
+  .data(anscomeData)
+  .enter()
+  .append("circle")
+  .attr("r", 3)
+  .attr("cx", function(d) {
+    return xscale(d.x);
+  })
+  .attr("cy", function(d) {
+    return yscale(d.y);
+  });
+
+</script>
+
+
