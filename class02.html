@@ -95,10 +95,14 @@ svg.append("g")
   .attr("class", "axis xaxis")
   .call(xaxis)
   .attr("transform", "translate(0," + h + ")")
+  .selectAll("text")
+  .attr("dy", 12);
 
 svg.append("g")
   .attr("class", "axis yaxis")
   .call(yaxis)
+  .selectAll("text")
+  .attr("dx", -5);
 
 var agroup = svg.selectAll("g.a-group")
   .data(data)
