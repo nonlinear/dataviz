@@ -3,9 +3,39 @@
 <title>metis</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <style type="text/css">
-svg {
-  outline: solid 1px #eee;
+g.tick line {
+  stroke: #eee;
 }
+path.domain {
+  display: none;
+}
+g.tick text {
+  fill: grey;
+}
+.bg-screen {
+  fill: white;
+}
+.yaxis path.domain {
+  fill: #eee;
+}
+.a-group {
+  cursor: pointer;
+}
+.a-group text {
+  font-size: 10px;
+  fill: #ccc;
+}
+.a-group circle, .a-group text {
+  transition: all 300ms ease-out;
+}
+.a-group:hover circle {
+  r: 5;
+}
+.a-group:hover text {
+  fill: #666;
+}
+
+
 </style>
 <body>
  <div class="container">
@@ -16,22 +46,29 @@ svg {
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
-var anscomeData = [
-  {"x": 14, "y": 8.1},
-  {"x": 13, "y": 8.74},
-  {"x": 12, "y": 9.13},
-  {"x": 11, "y": 9.26},
-  {"x": 10, "y": 9.14},
-  {"x": 9, "y": 8.77},
-  {"x": 8, "y": 8.14},
-  {"x": 7, "y": 7.26},
-  {"x": 6, "y": 6.13},
-  {"x": 5, "y": 4.74},
-  {"x": 4, "y": 3.1}
-];
 
-var w = d3.select(".container").node().clientWidth,
-  h = 400;
+var margin = {top: 10, right: 10, bottom: 20, left: 20};
+
+var elastic = d3.select(".container").node().clientWidth - 30
+  w = elastic - margin.left - margin.right,
+  h = 400 - margin.top - margin.bottom;
+
+var svg = d3.select(".container").append("svg")
+    .attr("width", w + margin.left + margin.right)
+    .attr("height", h + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.tsv("quartet.tsv", ready);
+
+function ready(err, data) {
+  if (err) throw "error loading data";
+
+  console.log("data", data);
+
+  data = data.filter(function(d) {
+    return d.group == "II";
+  });
 
 var xscale = d3.scaleLinear()
   .domain ([0,20])
@@ -41,24 +78,47 @@ var yscale = d3.scaleLinear()
   .domain ([0,10])
   .range ([h,0]);
 
+var xaxis = d3.axisBottom()
+  .scale(xscale)
+  .tickSize(-h);
 
+var yaxis = d3.axisLeft()
+  .scale(yscale)
+  .tickSize(-w);
 
-var svg = d3.select(".container")
-  .append("svg")
+svg.append("rect")
+  .attr("class", "bg-screen")
   .attr("width", w)
   .attr("height", h);
 
-svg.selectAll("circle")
-  .data(anscomeData)
+svg.append("g")
+  .attr("class", "axis xaxis")
+  .call(xaxis)
+  .attr("transform", "translate(0," + h + ")")
+
+svg.append("g")
+  .attr("class", "axis yaxis")
+  .call(yaxis)
+
+var agroup = svg.selectAll("g.a-group")
+  .data(data)
   .enter()
-  .append("circle")
-  .attr("r", 3)
-  .attr("cx", function(d) {
-    return xscale(d.x);
-  })
-  .attr("cy", function(d) {
-    return yscale(d.y);
+  .append("g")
+  .attr("class", "a-group")
+  .attr("transform", function(d) {
+    return "translate(" + xscale(d.x) + "," + yscale(d.y) + ")";
   });
+
+agroup.append("circle")
+  .attr('r', 3);
+
+agroup.append("text")
+  .text(function(d) {
+    return d.x + " | " + d.y;
+  })
+  .attr("dx", 7)
+  .attr("dy", 3);
+}
 
 </script>
 
