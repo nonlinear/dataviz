@@ -1,0 +1,28 @@
+.class02
+  g.tick
+    line
+      stroke: #eee
+    text
+      fill: grey
+
+  path.domain
+    display: none
+
+  .yaxis path.domain
+    fill: #eee
+
+  .a-group
+    cursor: pointer
+
+    text
+      font-size: 10px
+      fill: #ccc
+
+    circle, text
+      +transition
+
+    &:hover circle
+      r: 5
+
+    &:hover text
+      fill: #666

@@ -2,67 +2,11 @@
 <meta charset="utf-8">
 <title>metis</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<style type="text/css">
-g.tick line {
-  stroke: #eee;
-}
-path.domain {
-  display: none;
-}
-g.tick text {
-  fill: grey;
-}
-.bg-screen {
-  fill: white;
-}
-.yaxis path.domain {
-  fill: #eee;
-}
-.a-group {
-  cursor: pointer;
-}
-.a-group text {
-  font-size: 10px;
-  fill: #ccc;
-}
-.a-group circle, .a-group text {
-  transition: all 300ms ease-out;
-}
-.a-group:hover circle {
-  r: 5;
-}
-.a-group:hover text {
-  fill: #666;
-}
-
-#outerdiv
-{
-width:375px;
-height:667px;
-overflow:hidden;
-position:relative;
-outline: solid 1px #ccc;
-margin: 20px auto;
-}
-
-#inneriframe
-{
-position:absolute;
-top:-261px;
-left:-452px;
-width:1280px;
-height:1200px;
-}
-</style>
-
-
+<link rel="stylesheet" href="css/style.css">
 <body>
  <div class="container">
   <h1>Anscombe's Quartet II</h1>
-<div class="graph"></div>
-<div id='outerdiv'>
-<iframe src="https://projects.invisionapp.com/share/DBBK6MG4X#/screens" id='inneriframe' scrolling=no></iframe>
-</div>
+<div class="class02"></div>
 </div>
 
 </body>
@@ -72,17 +16,17 @@ height:1200px;
 
 var margin = {top: 10, right: 10, bottom: 20, left: 20};
 
-var elastic = d3.select(".graph").node().clientWidth - 30
+var elastic = d3.select(".class02").node().clientWidth - 30
   w = elastic - margin.left - margin.right,
   h = 400 - margin.top - margin.bottom;
 
-var svg = d3.select(".graph").append("svg")
+var svg = d3.select(".class02").append("svg")
     .attr("width", w + margin.left + margin.right)
     .attr("height", h + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.tsv("quartet.tsv", ready);
+d3.tsv("class02.tsv", ready);
 
 function ready(err, data) {
   if (err) throw "error loading data";
@@ -108,11 +52,6 @@ var xaxis = d3.axisBottom()
 var yaxis = d3.axisLeft()
   .scale(yscale)
   .tickSize(-w);
-
-svg.append("rect")
-  .attr("class", "bg-screen")
-  .attr("width", w)
-  .attr("height", h);
 
 svg.append("g")
   .attr("class", "axis xaxis")
