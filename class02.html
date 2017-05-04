@@ -35,13 +35,36 @@ g.tick text {
   fill: #666;
 }
 
+#outerdiv
+{
+width:375px;
+height:667px;
+overflow:hidden;
+position:relative;
+outline: solid 1px #ccc;
+margin: 20px auto;
+}
 
+#inneriframe
+{
+position:absolute;
+top:-261px;
+left:-452px;
+width:1280px;
+height:1200px;
+}
 </style>
+
+
 <body>
  <div class="container">
   <h1>Anscombe's Quartet II</h1>
-
+<div class="graph"></div>
+<div id='outerdiv'>
+<iframe src="https://projects.invisionapp.com/share/DBBK6MG4X#/screens" id='inneriframe' scrolling=no></iframe>
 </div>
+</div>
+
 </body>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -49,11 +72,11 @@ g.tick text {
 
 var margin = {top: 10, right: 10, bottom: 20, left: 20};
 
-var elastic = d3.select(".container").node().clientWidth - 30
+var elastic = d3.select(".graph").node().clientWidth - 30
   w = elastic - margin.left - margin.right,
   h = 400 - margin.top - margin.bottom;
 
-var svg = d3.select(".container").append("svg")
+var svg = d3.select(".graph").append("svg")
     .attr("width", w + margin.left + margin.right)
     .attr("height", h + margin.top + margin.bottom)
   .append("g")
