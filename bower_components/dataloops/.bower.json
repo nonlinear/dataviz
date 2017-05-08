@@ -1,0 +1,13 @@
+{
+  "name": "dataloops",
+  "homepage": "https://github.com/nonlinear/dataloops",
+  "_release": "bd8165a3fd",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "bd8165a3fd199c10c8ab3ac2a881d7327a3bda7c"
+  },
+  "_source": "https://github.com/nonlinear/dataloops.git",
+  "_target": "*",
+  "_originalSource": "dataloops"
+}
