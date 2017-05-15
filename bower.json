@@ -8,6 +8,7 @@
     "chosen": "~1.5.1",
     "dataloops": "*",
     "d3": "^4.8.0",
-    "bootstrap-sass": "~3.3.6"
+    "bootstrap-sass": "~3.3.6",
+    "tile": "*"
   }
 }

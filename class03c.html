@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<style type="text/css">
+
+    body {
+        font: 10px arial sans;
+    }
+
+    svg {
+        border: 1px solid #ff00ff;
+    }
+
+    h1 {
+        font-family: arial;
+    }
+
+  .axis line  {
+
+  }
+
+  path.domain {
+      display: none;
+  }
+
+  .year-1931 {
+      fill: red;
+  }
+  .year-1932 {
+      fill: green;
+  }
+
+</style>
+
+<body>
+    <h1>Barley</h1>
+</body>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<script>
+
+var margin = {top: 5, right: 8, bottom: 20, left: 30};
+
+var w = 700 - margin.left - margin.right,
+    h = 400 - margin.top - margin.bottom;
+
+var svg = d3.select("body").append("svg")
+        .attr("width", w + margin.left + margin.right)
+        .attr("height", h + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.tsv("class03.tsv", ready);
+
+function ready(err, data) {
+    if (err) throw "error loading data";
+
+    // console.log("data!!", data);
+    // filter out just the group you want.
+
+    var waseca = data.filter(function(d) {
+        return d.site == "Waseca";
+    });
+
+    var yscale = d3.scaleLinear()
+        .domain([0,80])
+        .range([h,0]);
+
+    //TODO do this dymanically
+    // unique array from object
+    var xscale = d3.scaleBand()
+        .domain(["Manchuria","Glabron","Svansota","Velvet","Trebi","No. 457","No. 462","Peatland","No. 475","Wisconsin No. 38"])
+        .range([0,w]);
+
+    var yaxis = d3.axisLeft()
+        .scale(yscale);
+
+    var xaxis = d3.axisBottom()
+        .scale(xscale);
+
+
+
+    var varietyGroup = svg.selectAll(".variety-group")
+        .data(waseca)
+        .enter()
+        .append("rect")
+        .attr("class", function(d) {
+            return "variety-group year-" + d.year;
+        })
+        .attr('x', function(d) {
+            // if you are 1932, move over a little bit more.
+            var nudge = (d.year == 1932) ? 30 : 0;
+            return xscale(d.variety) + nudge;
+        })
+        .attr("y", function(d) { return yscale(d.yield); })
+        .attr('width', xscale.bandwidth()/2 )
+        // .attr('width', 10 )
+        .attr('height', function(d) {
+            return h - yscale(d.yield);
+        })
+
+
+
+
+
+
+
+
+}
+
+</script>

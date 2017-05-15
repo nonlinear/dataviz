@@ -1,0 +1,38 @@
+{
+  "name": "tile",
+  "description": "configurable SVG patterns",
+  "main": [
+    "tile.sass"
+  ],
+  "keywords": [
+    "design",
+    "CSS",
+    "patterns",
+    "SASS"
+  ],
+  "authors": [
+    {
+      "name": "Nicholas Frota",
+      "email": "info@nicholasfrota.com",
+      "homepage": "http://nonlinear.nyc"
+    }
+  ],
+  "homepage": "http://nonlinear.nyc/tile",
+  "license": "MIT",
+  "ignore": [
+    "*.html",
+    "*.css",
+    "*.md"
+  ],
+  "private": false,
+  "_release": "d30632e2e5",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "d30632e2e5611b38b6a82c8f2f5ba52493b3ce3e"
+  },
+  "_source": "https://github.com/nonlinear/tile.git",
+  "_target": "*",
+  "_originalSource": "tile",
+  "_direct": true
+}

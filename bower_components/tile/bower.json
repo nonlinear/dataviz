@@ -1,0 +1,26 @@
+{
+  "name": "tile",
+  "description": "configurable SVG patterns",
+  "main": [
+    "tile.sass"
+  ],
+  "keywords": [
+    "design",
+    "CSS",
+    "patterns",
+    "SASS"
+  ],
+  "authors": [
+    { "name": "Nicholas Frota",
+      "email": "info@nicholasfrota.com",
+    "homepage": "http://nonlinear.nyc" }
+  ],
+  "homepage": "http://nonlinear.nyc/tile",
+  "license": "MIT",
+  "ignore": [
+    "*.html",
+    "*.css",
+    "*.md"
+  ],
+  "private": false
+}

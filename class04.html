@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>metis</title>
+<link rel="stylesheet" href="css/style.css">
+<style type="text/css">
+  .year-1931 {
+    fill: #666666;
+  }
+  .year-1932 {
+    fill: #999999;
+  }
+</style>
+<body>
+<div class="container">
+  <h1>Barley</h1>
+  <div class="container">
+    <div class="row">
+    </div>
+  </div>
+</div>
+</body>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+// var margin = {top: 10, right: 10, bottom: 70, left: 20};
+
+// var elastic = d3.select(".class03").node().clientWidth - 30
+//   w = elastic - margin.left - margin.right,
+//   h = 400 - margin.top - margin.bottom;
+
+// var svg = d3.select(".class03").append("svg")
+//     .attr("width", w + margin.left + margin.right)
+//     .attr("height", h + margin.top + margin.bottom)
+//   .append("g")
+//     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.tsv("barley.tsv", ready);
+
+function ready(err, data) {
+  if (err) throw "error loading data";
+
+var yieldsBySite = d3.nest()
+  .key(function(d) {
+    return d.site;
+  })
+  .entries(data);
+
+var site = d3.select(".row").selectAll(".col-md-4")
+  .data(yieldsBySite)
+  .enter()
+  .append("div")
+  .attr("class", "col-md-4");
+
+site.append("h3")
+  .text(function(d) {
+    return d.key;
+  })
+
+var svg = site.append("svg")
+  .attr("width", w + margin.left + margin.right)
+  .attr("height", h + margin.top + margin.bottom)
+  .append("g")
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+//     var yscale = d3.scaleLinear()
+//         .domain([0,80])
+//         .range([h,0]);
+
+//   var xscale = d3.scaleBand()
+//   .domain ([
+// "Manchuria",
+// "Glabron",
+// "Svansota",
+// "Velvet",
+// "Trebi",
+// "No. 457",
+// "No. 462",
+// "Peatland",
+// "No. 475",
+// "Wisconsin No. 38"])
+//   .range ([0,w]);
+
+// var xaxis = d3.axisBottom()
+//   .scale(xscale)
+//   .tickSize(-h);
+
+// var yaxis = d3.axisLeft()
+//   .scale(yscale)
+//   .tickSize(-w);
+
+// // axis and styles
+
+// svg.append("g")
+//   .attr("class", "axis xaxis")
+//   .call(xaxis)
+//   .attr("transform", "translate(0," + h + ")")
+//   .selectAll("text")
+//   .attr("transform", "rotate(-45)")
+//   .attr("dy", 40);
+
+// svg.append("g")
+//   .attr("class", "axis yaxis")
+//   .call(yaxis)
+//   .selectAll("text")
+//   .attr("dx", -5);
+
+//     var yaxis = d3.axisLeft()
+//         .scale(yscale);
+
+//     var xaxis = d3.axisBottom()
+//         .scale(xscale);
+
+// var varietyGroup = svg.selectAll(".variety-group")
+//   .data(waseca)
+//   .enter()
+//   .append("rect")
+//   .attr("class", function(d) {
+//     return "variety-group year-" + d.year;
+//   })
+//   .attr('x', function(d) {
+//     // if you are 1932, move over a little bit more.
+//     var nudge = (d.year == 1931) ? 0 : 20;
+//     return xscale(d.variety) + nudge;
+//   })
+//   .attr("y", function(d) { return yscale(d.yield); })
+//   .attr('width', xscale.bandwidth()/2 )
+//   // .attr('width', 10 )
+//   .attr('height', function(d) {
+//     return h - yscale(d.yield);
+//   })
+}
+</script>
