@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>metis</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>aaa</h1>
+    <div class="graph class02"></div>
+</div>
+</body>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+var margin = {top: 10, right: 10, bottom: 20, left: 20};
+
+var elastic = d3.select(".class02").node().clientWidth - 30
+  w = elastic - margin.left - margin.right,
+  h = 400 - margin.top - margin.bottom;
+
+var svg = d3.select(".class02").append("svg")
+    .attr("width", w + margin.left + margin.right)
+    .attr("height", h + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.tsv("class02.tsv", ready);
+
+function ready(err, data) {
+  if (err) throw "error loading data";
+
+  data = data.filter(function(d) {
+      return d.group == "II";
+  });
+
+  var xscale = d3.scaleLinear()
+    .domain ([0,20])
+    .range ([0,w]);
+
+  var yscale = d3.scaleLinear()
+    .domain ([0,10])
+    .range ([h,0]);
+
+  var xaxis = d3.axisBottom()
+    .scale(xscale)
+    .tickSize(-h);
+
+  var yaxis = d3.axisLeft()
+    .scale(yscale)
+    .tickSize(-w);
+
+  svg.append("g")
+    .attr("class", "axis xaxis")
+    .call(xaxis)
+    .attr("transform", "translate(0," + h + ")")
+    .selectAll("text")
+    .attr("dy", 12);
+
+  svg.append("g")
+    .attr("class", "axis yaxis")
+    .call(yaxis)
+    .selectAll("text")
+    .attr("dx", -5);
+
+  var agroup = svg.selectAll("g.a-group")
+    .data(data)
+    .enter()
+    .append("g")
+    .attr("class", "a-group")
+    .attr("transform", function(d) {
+        return "translate(" + xscale(d.x) + "," + yscale(d.y) + ")";
+    });
+
+  agroup.append("circle")
+    .attr("r", 3);
+
+agroup.append("text")
+  .text(function(d) {
+      return d.x + ", " +d.y;
+  })
+  .attr("dx", 7)
+  .attr("dy", 3);
+}
+</script>
+</html>

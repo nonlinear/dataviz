@@ -17,9 +17,9 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
-var margin = {top: 5, right: 8, bottom: 20, left: 40};
+var margin = {top: 5, right: 50, bottom: 20, left: 10};
 
-var elastic = d3.select(".g-chart-container").node().clientWidth - 30
+var elastic = d3.select(".container").node().clientWidth - 30
     w = elastic - margin.left - margin.right,
     h = 600 - margin.top - margin.bottom;
 
@@ -34,10 +34,13 @@ d3.csv("incomes.csv", ready);
 function ready(err, data) {
     if (err) throw "error loading data";
 
-    var usa = data.filter(function(d) {
-        return d.country == "United States" && d.cutoff == "cop50";
+    var cop50_data = data.filter(function(d) {
+        return d.cutoff == "cop50";
     });
 
+    var dataByCountry = d3.nest()
+        .key(function(d) { return d.country; })
+        .entries(cop50_data);
 
     var xscale = d3.scaleLinear()
         .domain([1970,2010])
@@ -51,39 +54,36 @@ function ready(err, data) {
         .x(function(d) { return xscale(d.year); })
         .y(function(d) { return yscale(d.val); });
 
-    var yaxis = d3.axisLeft()
+    var yaxis = d3.axisRight()
         .scale(yscale)
-        .tickSize(-w);
+        .tickSize(w);
 
     var xaxis = d3.axisBottom()
         .scale(xscale)
-        .tickSize(h);
+        .tickSize(h)
+        .tickFormat(d3.format(".0f"));
 
     svg.append("g")
         .attr("class", "axis")
-        .call(yaxis);
+        .call(yaxis)
+        .attr("dx", 30);
 
     svg.append("g")
         .attr("class", "axis")
-        .call(xaxis);
+        .call(xaxis)
+        .attr("dy", -5);
 
-    var incomeCircle = svg.selectAll(".income-circle")
-        .data(usa)
+    svg.selectAll(".median-path")
+        .data(dataByCountry)
         .enter()
         .append("path")
-            .attr("class", "median-path")
-            .datum(usa)
-            .attr("d", lineGenerator);
-
-    // svg.append("circle")
-    //     .attr("class", function(d) {
-    //         return "income-circle";
-    //     })
-    //     .attr('cx', function(d) {
-    //         return xscale(d.year);
-    //     })
-    //     .attr("cy", function(d) { return yscale(d.val); })
-    //     .attr("r", 4);
+        .attr("class", "median-path")
+        .classed("usa-path", function(d) {
+            return d.key == "United States";
+        })
+        .attr("d", function(d) {
+            return lineGenerator(d.values);
+        })
 
 
 

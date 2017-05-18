@@ -25,15 +25,40 @@ $color-link-hover: lighten($color-link, 20%)
 @import required/required
 @import ../bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss
 @import layout
-@import class02
-
-// @import ../bower_components/tile/tile.sass
-
-// .year-1931
-//     +tile(lines-b, 10px, white, black)
-
-// .year-1932
-//     fill: blue
 
 
+.graph
+  g.tick
+    line
+      stroke: #eeeeee
+    text
+      fill: grey
 
+  path.domain
+    display: none
+
+  .yaxis path.domain
+    fill: #eeeeee
+
+  .a-group
+    cursor: pointer
+
+    text
+      font-size: 10px
+      fill: #cccccc
+
+    circle, text
+      +transition
+
+    &:hover circle
+      r: 5
+
+    &:hover text
+      fill: #666666
+
+  path.median-path
+    fill: none
+    stroke: #eee
+    stroke-width: 2
+    &.usa-path
+      stroke: steelblue

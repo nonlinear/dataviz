@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<style type="text/css">
+
+    body {
+        font: 10px arial sans;
+    }
+
+    svg {
+        /*border: 1px solid #f0f;*/
+    }
+
+    h1 {
+        font-family: arial;
+    }
+
+  path.domain {
+      display: none;
+  }
+
+  .g-chart-container {
+      margin: 30px auto 30px auto;
+      max-width: 600px;
+  }
+
+  .axis line {
+      stroke: #d0d0d0;
+      stroke: /*#d0d0d0*/;
+      stroke-dasharray: 3px 3px;
+  }
+
+  .median-path {
+      stroke: #ccc;
+      stroke-width: 2;
+      fill: none;
+  }
+
+  .median-path.usa-path {
+      stroke: steelblue;
+  }
+
+</style>
+
+<body>
+    <h1>Median incomes, U.S.</h1>
+
+    <div class="g-chart-container"></div>
+
+</body>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<script>
+
+var margin = {top: 5, right: 8, bottom: 20, left: 40};
+
+var chartContainer = d3.select(".g-chart-container");
+
+var w = 600 - margin.left - margin.right,
+    h = 600 - margin.top - margin.bottom;
+
+
+
+d3.csv("incomes.csv", ready);
+
+function ready(err, data) {
+    if (err) throw "error loading data";
+
+    dataByCutoffAndCountry = d3.nest()
+        .key(function(d) { return d.cutoff; })
+        .key(function(d) { return d.country; })
+        .entries(data);
+
+    var xscale = d3.scaleLinear()
+        .domain([1970,2010])
+        .range([0,w]);
+
+    var yscale = d3.scaleLinear()
+        .domain([0,45000])
+        .range([h,0]);
+
+    var lineGenerator = d3.line()
+        .x(function(d) { return xscale(d.year); })
+        .y(function(d) { return yscale(d.val); });
+
+    var cutoffGroup = chartContainer.selectAll(".cutoff-group")
+        .data(dataByCutoffAndCountry)
+        .enter()
+        .append("div")
+        .attr("class", "cutoff-group");
+
+    cutoffGroup.append("h4")
+        .text(function(d) { return d.key; });
+
+    var svg = cutoffGroup.append("svg")
+            .attr("width", w + margin.left + margin.right)
+            .attr("height", h + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var yaxis = d3.axisLeft()
+        .scale(yscale)
+        .tickSize(-w);
+
+    var xaxis = d3.axisBottom()
+        .scale(xscale)
+        .tickSize(h)
+        .tickFormat(d3.format(".0f"));
+
+    svg.append("g")
+        .attr("class", "axis")
+        .call(yaxis);
+
+    svg.append("g")
+        .attr("class", "axis")
+        .call(xaxis);
+
+    var countryPath = svg.selectAll(".country-path")
+        .data(function(d) {
+
+            return d.values;
+        })
+        .enter()
+        .append("path")
+        .attr("class", "country-path")
+        .attr("d", function(d) {
+            return lineGenerator(d.values);
+        });
+
+
+}
+
+</script>
