@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Class 07</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Class 7</h1>
+    <div class="graph class06">
+    </div>
+</div>
+</body>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+var margin = {top: 10, right: 50, bottom: 20, left: 10};
+
+var elastic = d3.select(".container").node().clientWidth - 30
+  w = elastic - margin.left - margin.right,
+  h = 400 - margin.top - margin.bottom;
+
+var svg = d3.select(".graph").append("svg")
+    .attr("width", w + margin.left + margin.right)
+    .attr("height", h + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.csv("incomes.csv", ready);
+
+function ready(err, data) {
+  if (err) throw "error loading data";
+
+var usa = data.filter(function(d) {
+  return d.country == "United States" && d.cutoff == "cop50";
+});
+
+var xscale = d3.scaleLinear()
+  .domain ([1970,2010])
+  .range ([0,w]);
+
+var yscale = d3.scaleLinear()
+  .domain ([0,45000])
+  .range ([h,0]);
+
+var xaxis = d3.axisBottom()
+  .scale(xscale)
+  .tickSize(-h);
+
+var yaxis = d3.axisRight()
+  .scale(yscale)
+  .tickSize(w);
+
+svg.append("g")
+  .attr("class", "axis xaxis")
+  .call(xaxis)
+  .attr("transform", "translate(0," + h + ")")
+  .selectAll("text")
+  .attr("dy", 12);
+
+svg.append("g")
+  .attr("class", "axis yaxis")
+  .call(yaxis)
+  .selectAll("text")
+  .attr("dx", 5);
+
+var lineGenerator = d3.line()
+    .x(function(d) { return xscale(d.year); })
+    .y(function(d) { return yscale(d.val); });
+
+var incomeLine = svg.selectAll(".income-line")
+  .data(usa)
+  .enter()
+  .append("path")
+    .attr("class", "income-line")
+    .datum(usa)
+    .attr("d", lineGenerator);
+}
+</script>
+</html>
