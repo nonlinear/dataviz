@@ -9,6 +9,7 @@
 <body>
 <div class="container">
     <h1>Class 7</h1>
+    <div class='nav-container'></div>
     <div class="graph class06">
     </div>
 </div>
@@ -46,15 +47,17 @@ var allCountries = data.map( function(d) {
 var uniqueCountries = d3.set(allCountries).values();
 
 
-var button = chartContainer.selectAll(".user-nav-button")
+var button = d3.select(".nav-container").selectAll("label")
   .data(uniqueCountries)
   .enter()
-  .append("button")
-  .attr("class", "user-nav-button")
+  .append("label")
   .text(function(d) { return d; })
   .on("click", function(d) {
     return updateLine(d);
-  });
+  })
+  .append("input")
+  .attr("type", "radio")
+  .attr("name", "country");
 
 var usa = data.filter(function(d) {
   return d.country == "Australia" && d.cutoff == "cop50";
