@@ -19,9 +19,14 @@
 <script>
 var margin = {top: 10, right: 50, bottom: 20, left: 10};
 
+
 var elastic = d3.select(".container").node().clientWidth - 30
   w = elastic - margin.left - margin.right,
   h = 400 - margin.top - margin.bottom;
+
+var chartContainer = d3.select(".graph");
+
+
 
 var svg = d3.select(".graph").append("svg")
     .attr("width", w + margin.left + margin.right)
@@ -34,17 +39,39 @@ d3.csv("incomes.csv", ready);
 function ready(err, data) {
   if (err) throw "error loading data";
 
+var allCountries = data.map( function(d) {
+  return d.country;
+});
+
+var uniqueCountries = d3.set(allCountries).values();
+
+
+var button = chartContainer.selectAll(".user-nav-button")
+  .data(uniqueCountries)
+  .enter()
+  .append("button")
+  .attr("class", "user-nav-button")
+  .text(function(d) { return d; })
+  .on("click", function(d) {
+    return updateLine(d);
+  });
+
 var usa = data.filter(function(d) {
-  return d.country == "United States" && d.cutoff == "cop50";
+  return d.country == "Australia" && d.cutoff == "cop50";
+});
+
+data.forEach(function(d) {
+    d.val = +d.val;
+    d.year = +d.year;
 });
 
 var xscale = d3.scaleLinear()
-  .domain ([1970,2010])
+  .domain(d3.extent(data, function(d) { return d.year; }))
   .range ([0,w]);
 
 var yscale = d3.scaleLinear()
-  .domain ([0,45000])
-  .range ([h,0]);
+    .domain([0,d3.max(data, function(d) { return d.val; })])
+    .range([h,0]);
 
 var xaxis = d3.axisBottom()
   .scale(xscale)
@@ -71,13 +98,73 @@ var lineGenerator = d3.line()
     .x(function(d) { return xscale(d.year); })
     .y(function(d) { return yscale(d.val); });
 
-var incomeLine = svg.selectAll(".income-line")
+// var incomeLine = svg.selectAll(".income-line")
+//   .data(usa)
+//   .enter()
+//   .append("path")
+//     .attr("class", "income-line")
+//     .datum(usa)
+//     .attr("d", lineGenerator);
+
+var dot = svg.append("g").selectAll(".g-dot")
   .data(usa)
   .enter()
-  .append("path")
-    .attr("class", "income-line")
-    .datum(usa)
-    .attr("d", lineGenerator);
+  .append("circle")
+  .attr("class", "g-dot")
+  .attr("r", 4)
+  .attr("cx", function(d) { return xscale(d.year); })
+  .attr("cy", function(d) { return yscale(d.val); });
+
+function updateLine(countryName) {
+    var thisCountry = data.filter(function(d) {
+      return d.country == countryName && d.cutoff == "cop50";
+    });
+
+    var updateDots = svg.selectAll(".g-dot")
+        .data(thisCountry, function(d) {
+          return d.year;
+        });
+// exit
+    updateDots.exit()
+        .style("fill", "red")
+        .transition()
+        .remove();
+
+// update
+
+    updateDots.transition()
+        .style("fill", "purple")
+        .attr("cx", function(d) {
+          return xscale(d.year);
+        })
+        .attr("cy", function(d) {
+          return yscale(d.val);
+        })
+
+// enter
+    updateDots.enter().append("circle")
+        .attr("class", "g-dot")
+        .attr("cx", function(d) {
+          return xscale(d.year);
+        })
+        .attr("cy", function(d) {
+          return yscale(d.val);
+        })
+        .attr("r", 4)
+        .transition()
+        .style("fill", "green");
+
 }
+
+
+  // .enter()
+  // .append("circle")
+  // .attr("class", "g-dot")
+  // .attr("r", 4)
+  // .attr("cx", function(d) { return xscale(d.year); })
+  // .attr("cy", function(d) { return yscale(d.val); });
+}
+
+window.updateLine = updateLine;
 </script>
 </html>
