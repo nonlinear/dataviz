@@ -1,0 +1,124 @@
+<a href="https://www.nytimes.com/interactive/2017/05/24/us/cbo-score-ahca-amendments.html?_r=0">New C.B.O. Score: G.O.P. Health Bill Would Save Government Billions but Leave Millions Uninsured</a>
+
+data.forEach(function(d) {
+      d.year = +d.year;
+      d.val = +d.val;
+    });
+    var dataByType = d3.nest()
+        .key(function(d) { return d.type; })
+        .entries(data);
+    $(window).resize(_.debounce(renderChart, 300));
+    renderChart();
+    function renderChart() {
+        var margin = {top: 30, right: 10, bottom: 20, left: 20};
+        var gfk = d3.select("#uninsured");
+        var width = gfk.node().clientWidth - margin.left - margin.right,
+            height = 375 - margin.top - margin.bottom;
+        var svg = gfk.html('').append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        var x = d3.scaleLinear()
+            .range([0, width])
+            .domain([2013,2026]);
+        var line = d3.line()
+            .x(function(d) { return x(d.year); })
+            .y(function(d) { return y(d.val); });
+        var y = d3.scaleLinear()
+            .range([height, 0])
+            .domain([0,60]);
+        var xaxis = d3.axisBottom()
+            .tickSize(-height)
+            .tickFormat(function(d) { return d; })
+            .tickPadding(10)
+            .scale(x);
+        var yaxis = d3.axisLeft()
+            .tickSize(width)
+            .scale(y);
+        svg.append('rect.bg-rect')
+            .attr("x", x(2017) )
+            .attr('width', x(2026) - x(2017))
+            .attr("height", height);
+        svg.append("g.x.axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xaxis)
+            .selectAll("text")
+            .style('display', function(d) {
+                return [2013, 2016, 2026].indexOf(d) > -1 ? "block" : 'none';
+            });
+        svg.append("g.y.axis")
+            .call(yaxis)
+            .attr("transform", "translate(" + width + ",0)")
+            .selectAll("g")
+            .classed('g-baseline', function(d) {
+                return d == 0;
+            })
+            .selectAll("text")
+            .style('display', function(d) {
+                return (d == 60 || d == 0) ? "none" : "block";
+            });
+        var p1 = data.filter(function(d) { return d.year == 2016; })[0].val,
+            p2 = data.filter(function(d) { return d.year == 2017; })[0].val;
+        // dataByType.sort(function(a,b) {
+        //     return ['actual', 'projected', 'obamacare'].indexOf(a.key) - ['actual', 'projected', 'obamacare'].indexOf(b.key);
+        // });
+        var paths = svg.append("g.path-group").selectAll(".g-proj-path")
+            .data(dataByType)
+            .enter()
+            .append("path")
+            .attr("class", function(d) {
+                return "g-proj-path " + d.key;
+            })
+            .attr('d', function(d) {
+                return line(d.values);
+            });
+        svg.select(".path-group").append("line.sad-patch.g-proj-path.projected")
+            .attr("x1", x(2016))
+            .attr("x2", x(2017))
+           .attr('y1', y(p1))
+           .attr('y2', y(p2));
+        var dots = svg.append("g.dot-cont").selectAll(".g-dot-group")
+            .data(data)
+            .enter()
+            .append("g")
+            .attr("class", function(d) { return "g-dot-group " + d.type + " -year-" + d.year; })
+            .attr("transform", function(d) {
+                return "translate(" + x(d.year) + "," + y(d.val) + ")";
+            });
+        dots.append('circle')
+            .attr('r', innerWidth < 400 ? 4 : 6);
+        svg.append("text.projected-label")
+            .text("Projected")
+            .attr('x', x(2021))
+            .attr('y', y(0))
+            .attr('dy', -20);
+        var l1 = svg.append('g.label-group')
+            .attr('transform', 'translate(-20,-10)');
+        l1.append("text.label-intro")
+            .text("Before Obamacare");
+        l1.append("text.label-value.obamacare-lv")
+            .text("57 million")
+            .attr('dy', 16);
+        var l2 = svg.append('g.label-group')
+            .attr('transform', 'translate(' + (x(2017) - 10) + ',' + (y(27) + 23) + ')');
+        l2.append("text.label-intro")
+            .text("Now");
+        l2.append("text.label-value")
+            .text("28 million")
+            .attr('dy', 16);
+        var l3 = svg.append('g.label-group.label-2026')
+            .attr('transform', 'translate(' + (x(2026) + 13) + ',' + (y(52) + 30) + ')');
+        l3.append("text.label-intro")
+            .text("In 2026");
+        l3.append("text.label-value")
+            .text("51 million")
+            .attr('dy', 16);
+        var l4 = svg.append('g.label-group.obamacare-est-label')
+            .attr('transform', 'translate(' + (x(2021)) + ',' + (y(31)) + ')');
+        l4.append("text.label-intro")
+            .text("Estimate under Obamacare");
+        // l3.append("text.label-value")
+        //     .text("XX million")
+        //     .attr('dy', 16);
+    }
